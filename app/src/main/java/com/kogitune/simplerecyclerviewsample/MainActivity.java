@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 
 public class MainActivity extends Activity {
@@ -21,13 +24,13 @@ public class MainActivity extends Activity {
     }
 
     private void setupRecyclerView() {
-
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         CustomAdapter adapter = new CustomAdapter(mDataset);
         recyclerView.setAdapter(adapter);
+
     }
 
     private void initDataset() {
@@ -36,4 +39,5 @@ public class MainActivity extends Activity {
             mDataset[i] = "This is element #" + i;
         }
     }
+
 }
