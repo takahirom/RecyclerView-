@@ -16,7 +16,9 @@
 
 package com.kogitune.simplerecyclerviewsample;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,10 +59,26 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
         Log.d(TAG, "CreateViewHolder");
-        View v = LayoutInflater.from(viewGroup.getContext())
+        final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
+        final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) v.getLayoutParams();
+        ViewCompat.setElevation(v.findViewById(R.id.textView), 15);
+        ValueAnimator anim = ValueAnimator.ofInt(0, 60);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val = (Integer) valueAnimator.getAnimatedValue();
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams)v.getLayoutParams();
+                layoutParams.bottomMargin = val;
+                v.setLayoutParams(layoutParams);
+            }
+        });
+
+        anim.setDuration(400);
+        anim.setStartDelay(viewGroup.getChildCount() * 300);
+        anim.start();
 
         return new ViewHolder(v);
     }
