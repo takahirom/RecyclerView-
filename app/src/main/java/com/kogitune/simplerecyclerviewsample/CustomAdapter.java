@@ -24,8 +24,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final View rootView;
 
         public ViewHolder(View v) {
             super(v);
@@ -46,9 +49,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     Toast.makeText(v.getContext(), "Element " + getPosition() + " clicked.", Toast.LENGTH_LONG).show();
                 }
             });
+            rootView = v;
             textView = (TextView) v.findViewById(R.id.textView);
         }
 
+        public View getRootView() {
+            return rootView;
+        }
         public TextView getTextView() {
             return textView;
         }
@@ -58,14 +65,32 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         mDataSet = dataSet;
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
         Log.d(TAG, "CreateViewHolder");
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
-        final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) v.getLayoutParams();
-        ViewCompat.setElevation(v.findViewById(R.id.textView), 15);
-        ValueAnimator anim = ValueAnimator.ofInt(0, 60);
+
+        startAnimation(v);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        Log.d(TAG, "Element " + position + " set.");
+        viewHolder.getTextView().setText(mDataSet[position]);
+    }
+
+    private void startAnimation(View viewToAnimate) {
+        final Context context = viewToAnimate.getContext();
+        Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
+        viewToAnimate.startAnimation(animation);
+
+
+        final View v = viewToAnimate;
+        ViewCompat.setElevation(v.findViewById(R.id.textView), 30);
+        ValueAnimator anim = ValueAnimator.ofInt(0, 45);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -75,25 +100,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 v.setLayoutParams(layoutParams);
             }
         });
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        anim.setDuration(400);
-        anim.setStartDelay(viewGroup.getChildCount() * 300);
+        anim.setDuration(300);
+        anim.setStartDelay(400 + ((ViewGroup)v.getParent()).getChildCount() * 100);
         anim.start();
 
-        return new ViewHolder(v);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet[position]);
-        startAnimation(viewHolder.textView);
-    }
-
-    private void startAnimation(View viewToAnimate) {
-        final Context context = viewToAnimate.getContext();
-        Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-        viewToAnimate.startAnimation(animation);
     }
 
     @Override
