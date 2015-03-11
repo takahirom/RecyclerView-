@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +55,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         public View getRootView() {
             return rootView;
         }
+
         public TextView getTextView() {
             return textView;
         }
@@ -72,17 +72,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
 
-        startAnimation(v);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
+        startAnimation(viewHolder.rootView, position);
         viewHolder.getTextView().setText(mDataSet[position]);
     }
 
-    private void startAnimation(View viewToAnimate) {
+    private void startAnimation(View viewToAnimate,int position) {
         final Context context = viewToAnimate.getContext();
         Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
         viewToAnimate.startAnimation(animation);
@@ -95,7 +95,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int val = (Integer) valueAnimator.getAnimatedValue();
-                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams)v.getLayoutParams();
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) v.getLayoutParams();
                 layoutParams.bottomMargin = val;
                 v.setLayoutParams(layoutParams);
             }
@@ -103,7 +103,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
 
         anim.setDuration(300);
-        anim.setStartDelay(400 + ((ViewGroup)v.getParent()).getChildCount() * 100);
+        anim.setStartDelay(400 + position * 100);
         anim.start();
 
     }
