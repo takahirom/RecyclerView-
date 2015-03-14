@@ -68,7 +68,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
-        Log.d(TAG, "CreateViewHolder");
+        Log.d(TAG, "onCreateViewHolder");
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
 
@@ -77,36 +77,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d(TAG, "Element " + position + " set.");
-        startAnimation(viewHolder.rootView, position);
+        Log.d(TAG, "onBindViewHolder Element " + position + " set.");
         viewHolder.getTextView().setText(mDataSet[position]);
     }
 
-    private void startAnimation(View viewToAnimate,int position) {
-        final Context context = viewToAnimate.getContext();
-        Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-        viewToAnimate.startAnimation(animation);
-
-
-        final View v = viewToAnimate;
-        ViewCompat.setElevation(v.findViewById(R.id.textView), 30);
-        ValueAnimator anim = ValueAnimator.ofInt(0, 45);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int val = (Integer) valueAnimator.getAnimatedValue();
-                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) v.getLayoutParams();
-                layoutParams.bottomMargin = val;
-                v.setLayoutParams(layoutParams);
-            }
-        });
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        anim.setDuration(300);
-        anim.setStartDelay(400 + position * 100);
-        anim.start();
-
-    }
 
     @Override
     public int getItemCount() {
