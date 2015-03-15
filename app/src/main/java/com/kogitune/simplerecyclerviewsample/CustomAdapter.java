@@ -30,10 +30,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     private static final String TAG = "CustomAdapter";
 
-    private String[] mDataSet;
+    private List<String> mDataSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
@@ -61,29 +65,44 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
-    public CustomAdapter(String[] dataSet) {
-        mDataSet = dataSet;
+    public CustomAdapter() {
+        mDataSet = new ArrayList<String>();
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
         Log.d(TAG, "onCreateViewHolder");
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
-
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "onBindViewHolder Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet[position]);
+        viewHolder.getTextView().setText(mDataSet.get(position));
     }
-
 
     @Override
     public int getItemCount() {
-        return mDataSet.length;
+        return mDataSet.size();
+    }
+
+    public void addAllItem(String[] dataset){
+        mDataSet.addAll(Arrays.asList(dataset));
+        notifyItemRangeInserted(0,9);
+    }
+    public void addItem(int position) {
+        if (position > mDataSet.size()) return;
+
+        mDataSet.add(position, "new object");
+        notifyItemInserted(position);
+    }
+
+    public void removeItem(int position) {
+        if (position >= mDataSet.size()) return;
+
+        mDataSet.remove(position);
+        notifyItemRemoved(position);
     }
 }
