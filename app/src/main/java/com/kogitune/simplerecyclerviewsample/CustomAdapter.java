@@ -80,7 +80,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "onBindViewHolder Element " + position + " set.");
-        viewHolder.getTextView().setText(mDataSet.get(position));
+        //viewHolder.getTextView().setText(mDataSet.get(position));
     }
 
     @Override
@@ -90,8 +90,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     public void addAllItem(String[] dataset){
         mDataSet.addAll(Arrays.asList(dataset));
-        notifyItemRangeInserted(0,9);
+        notifyItemRangeInserted(1,dataset.length-3);
     }
+
     public void addItem(int position) {
         if (position > mDataSet.size()) return;
 

@@ -19,10 +19,13 @@ import android.animation.ValueAnimator;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,7 +228,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
     @Override
     public boolean animateAdd(final ViewHolder holder) {
         endAnimation(holder);
-        ViewCompat.setAlpha(holder.itemView, 0);
+        holder.itemView.setPadding(0, 0, 0, 0);
         mPendingAdditions.add(holder);
         return true;
     }
@@ -236,13 +239,15 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         mAddAnimations.add(holder);
 
         view.setAlpha(1);
-        ValueAnimator anim = ValueAnimator.ofInt(0, 45);
+        ValueAnimator anim = ValueAnimator.ofInt(0, 22);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int val = (Integer) valueAnimator.getAnimatedValue();
-                view.setPadding(0, 0, 0, val);
-                ViewCompat.setElevation(view, val);
+                final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
+                layoutParams.bottomMargin = val;
+                layoutParams.topMargin = val;
+                view.setLayoutParams(layoutParams);
                 if (val == 45) {
                     dispatchAddFinished(holder);
                     mAddAnimations.remove(holder);
@@ -252,7 +257,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         });
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
 
-        anim.setDuration(300).setStartDelay(1000 - holder.getPosition() * 100);
+        anim.setDuration(300).setStartDelay(1000 - holder.getPosition() * 80);
         anim.start();
     }
 

@@ -14,7 +14,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 public class MainActivity extends Activity {
 
-    private static final int DATASET_COUNT = 60;
+    private static final int DATASET_COUNT = 4;
     private static final String TAG = "MainActivity";
     private String[] mDataset;
     private CustomAdapter mAdapter;
