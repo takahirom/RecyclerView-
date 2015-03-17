@@ -22,10 +22,14 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +60,8 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
     private ArrayList<ViewHolder> mMoveAnimations = new ArrayList<ViewHolder>();
     private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<ViewHolder>();
     private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<ViewHolder>();
+
+    private boolean isFirstAdd = true;
     private String TAG = "CustomAnimator";
 
     private static class MoveInfo {
@@ -239,23 +245,36 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         mAddAnimations.add(holder);
 
         view.setAlpha(1);
-        ValueAnimator anim = ValueAnimator.ofInt(0, 22);
+        ValueAnimator anim = ValueAnimator.ofInt(0, 30);
+
+        RecyclerView recyclerView = null;
+        if (holder.getPosition() == 0) {
+            recyclerView = (RecyclerView) view.getParent();
+        }
+        final RecyclerView finalRecyclerView = recyclerView;
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int val = (Integer) valueAnimator.getAnimatedValue();
+                if (finalRecyclerView != null) {
+                    final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) finalRecyclerView.getLayoutParams();
+                    final float margin = Util.convertDpToPixel(30 - val, finalRecyclerView.getContext());
+                    layoutParams.topMargin = (int) margin;
+                }
                 final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
                 layoutParams.bottomMargin = val;
-                layoutParams.topMargin = val;
+                if (holder.getPosition() == 0) {
+                    layoutParams.topMargin = val;
+                }
                 view.setLayoutParams(layoutParams);
-                if (val == 45) {
+                if (val == 30) {
                     dispatchAddFinished(holder);
                     mAddAnimations.remove(holder);
                     dispatchFinishedWhenDone();
                 }
             }
         });
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim.setInterpolator(new LinearInterpolator());
 
         anim.setDuration(300).setStartDelay(1000 - holder.getPosition() * 80);
         anim.start();
