@@ -1,1 +1,3 @@
-# SimpleRecyclerViewSample
+# RecyclerViewExperimental
+
+Apache License 2.0
