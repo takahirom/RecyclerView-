@@ -15,8 +15,12 @@ import hugo.weaving.DebugLog;
  */
 public class CustomItemDecoration extends RecyclerView.ItemDecoration{
     private static final String TAG = "CustomItemDecoration";
-    public CustomItemDecoration(RecyclerView recyclerView, RecyclerView.ViewHolder animationItem){
+    private final RecyclerView mRecyclerView;
+    private final RecyclerView.ViewHolder mAnimationItem;
 
+    public CustomItemDecoration(RecyclerView recyclerView, RecyclerView.ViewHolder animationItem){
+        mRecyclerView = recyclerView;
+        mAnimationItem = animationItem;
     }
 
     @DebugLog
@@ -25,7 +29,6 @@ public class CustomItemDecoration extends RecyclerView.ItemDecoration{
         super.onDraw(c, parent, state);
         final Paint paint = new Paint();
         paint.setColor(Color.argb(55, 255, 0, 0));
-
         c.drawRect(0,0,100,100,paint);
     }
 
