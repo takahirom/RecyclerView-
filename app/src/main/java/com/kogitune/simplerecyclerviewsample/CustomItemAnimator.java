@@ -222,6 +222,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
             public void onAnimationEnd(View view) {
                 animation.setListener(null);
                 ViewCompat.setAlpha(view, 1);
+                setMarginDefault(view);
                 dispatchRemoveFinished(holder);
                 mRemoveAnimations.remove(holder);
                 dispatchFinishedWhenDone();
@@ -234,7 +235,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
     @Override
     public boolean animateAdd(final ViewHolder holder) {
         endAnimation(holder);
-        holder.itemView.setPadding(0, 0, 0, 0);
+        setMarginFirst(holder.itemView);
         mPendingAdditions.add(holder);
         return true;
     }
@@ -245,6 +246,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         mAddAnimations.add(holder);
 
         view.setAlpha(1);
+        setMarginFirst(view);
         ValueAnimator anim = ValueAnimator.ofInt(0, 30);
 
         RecyclerView recyclerView = null;
@@ -262,9 +264,10 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
                     layoutParams.topMargin = (int) margin;
                 }
                 final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
-                layoutParams.bottomMargin = val;
-                if (holder.getPosition() == 0) {
-                    layoutParams.topMargin = val;
+                final int margin = (int) Util.convertDpToPixel(val / 4, view.getContext());
+                layoutParams.bottomMargin = margin;
+                if (holder.getPosition() != 0) {
+                    layoutParams.topMargin = margin;
                 }
                 view.setLayoutParams(layoutParams);
                 if (val == 30) {
@@ -276,9 +279,26 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         });
         anim.setInterpolator(new LinearInterpolator());
 
-        anim.setDuration(300).setStartDelay(1000 - holder.getPosition() * 80);
+        anim.setDuration(getAddDuration()).setStartDelay(1000 - holder.getPosition() * getAddDuration() / 2);
         anim.start();
     }
+
+    private void setMarginFirst(View view){
+        final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
+        final int margin = (int) Util.convertDpToPixel(0, view.getContext());
+        layoutParams.bottomMargin = margin;
+        layoutParams.topMargin = margin;
+        view.setLayoutParams(layoutParams);
+    }
+
+    private void setMarginDefault(View view){
+        final RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
+        final int margin = (int) Util.convertDpToPixel(30 / 4, view.getContext());
+        layoutParams.bottomMargin = margin;
+        layoutParams.topMargin = margin;
+        view.setLayoutParams(layoutParams);
+    }
+
 
     @DebugLog
     @Override
@@ -393,6 +413,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
             public void onAnimationEnd(View view) {
                 oldViewAnim.setListener(null);
                 ViewCompat.setAlpha(view, 1);
+                setMarginDefault(view);
                 ViewCompat.setTranslationX(view, 0);
                 ViewCompat.setTranslationY(view, 0);
                 dispatchChangeFinished(changeInfo.oldHolder, true);
@@ -414,6 +435,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
                 public void onAnimationEnd(View view) {
                     newViewAnimation.setListener(null);
                     ViewCompat.setAlpha(newView, 1);
+                    setMarginDefault(newView);
                     ViewCompat.setTranslationX(newView, 0);
                     ViewCompat.setTranslationY(newView, 0);
                     dispatchChangeFinished(changeInfo.newHolder, false);
@@ -458,13 +480,13 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
             return false;
         }
         ViewCompat.setAlpha(item.itemView, 1);
+        setMarginDefault(item.itemView);
         ViewCompat.setTranslationX(item.itemView, 0);
         ViewCompat.setTranslationY(item.itemView, 0);
         dispatchChangeFinished(item, oldItem);
         return true;
     }
 
-    @DebugLog
     @Override
     public void endAnimation(ViewHolder item) {
         final View view = item.itemView;
@@ -483,10 +505,12 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
         endChangeAnimation(mPendingChanges, item);
         if (mPendingRemovals.remove(item)) {
             ViewCompat.setAlpha(view, 1);
+            setMarginDefault(view);
             dispatchRemoveFinished(item);
         }
         if (mPendingAdditions.remove(item)) {
             ViewCompat.setAlpha(view, 1);
+            setMarginDefault(view);
             dispatchAddFinished(item);
         }
 
@@ -517,6 +541,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
             ArrayList<ViewHolder> additions = mAdditionsList.get(i);
             if (additions.remove(item)) {
                 ViewCompat.setAlpha(view, 1);
+                setMarginDefault(view);
                 dispatchAddFinished(item);
                 if (additions.isEmpty()) {
                     mAdditionsList.remove(additions);
@@ -598,6 +623,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
             ViewHolder item = mPendingAdditions.get(i);
             View view = item.itemView;
             ViewCompat.setAlpha(view, 1);
+            setMarginDefault(view);
             dispatchAddFinished(item);
             mPendingAdditions.remove(i);
         }
@@ -635,6 +661,7 @@ public class CustomItemAnimator extends RecyclerView.ItemAnimator {
                 ViewHolder item = additions.get(j);
                 View view = item.itemView;
                 ViewCompat.setAlpha(view, 1);
+                setMarginDefault(view);
                 dispatchAddFinished(item);
                 additions.remove(j);
                 if (additions.isEmpty()) {

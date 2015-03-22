@@ -50,6 +50,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(v.getContext(), "Element " + getPosition() + " clicked.", Toast.LENGTH_LONG).show();
+
+                    final RecyclerView parent = (RecyclerView) v.getParent();
+                    parent.addItemDecoration(new CustomItemDecoration(parent, v));
                 }
             });
             rootView = v;
@@ -74,11 +77,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         Log.d(TAG, "onCreateViewHolder");
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
+
         return new ViewHolder(v);
     }
 
     @Override
+    public void onViewAttachedToWindow(ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+    }
+
+    @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+
         Log.d(TAG, "onBindViewHolder Element " + position + " set.");
         //viewHolder.getTextView().setText(mDataSet.get(position));
     }

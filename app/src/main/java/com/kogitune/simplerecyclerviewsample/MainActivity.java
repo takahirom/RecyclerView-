@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new CustomAdapter();
         recyclerView.setAdapter(mAdapter);
-        recyclerView.addItemDecoration(new CustomItemDecoration());
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
             @Override
